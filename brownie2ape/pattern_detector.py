@@ -38,18 +38,45 @@ class PatternDetector:
             "brownie.project",
             "brownie.network.account",
             "brownie.network.eth",
+            "brownie.network.transaction",
+            "brownie.network.interfaces",
+            "brownie.convert",
             "brownie._config",
         ],
         "usages": [
             "brownie.eth",
             "network.connect",
             "network.eth",
-            "accounts",
+            "network.eth.accounts",
+            "accounts[",
             "ChainAPI",
             "BrownieProject",
             "ContractContainer",
             "web3.eth",
+            "web3.eth.get_balance",
+            "chain.eth.get_balance",
+            "project.",
         ],
+    }
+
+    TRANSFORMABLE_PATTERNS = {
+        "brownie-import-network",
+        "brownie-import-accounts",
+        "brownie-network-account-import",
+        "brownie-network-eth-import",
+        "brownie-import-project",
+        "brownie-eth-usage",
+        "network-connect",
+        "network-eth-accounts",
+        "project-contract-container",
+        "brownie-chain-api",
+        "web3-eth-replace",
+        "brownie-config-replace",
+        "brownie-network-transaction",
+        "brownie-convert-import",
+        "brownie-interface-import",
+        "chain-provider-network",
+        "chain-eth-balance",
     }
 
     def __init__(self, project_root: Path):
@@ -140,13 +167,23 @@ class PatternDetector:
         matches = []
 
         usage_patterns = [
-            ("brownie.eth", "brownie_eth_address"),
-            ("network.connect", "network_connect"),
-            ("network.eth.accounts", "network_eth_account"),
-            ("ChainAPI", "brownie_chain_api"),
-            ("web3.eth", "web3_eth_import"),
-            ("project.", "project_contract_container"),
+            ("brownie.eth", "brownie-eth-usage"),
+            ("network.connect", "network-connect"),
+            ("network.eth.accounts", "network-eth-accounts"),
+            ("ChainAPI", "brownie-chain-api"),
+            ("web3.eth", "web3-eth-replace"),
+            ("web3.eth.get_balance", "chain-eth-balance"),
+            ("chain.eth.get_balance", "chain-eth-balance"),
+            ("brownie._config", "brownie-config-replace"),
+            ("brownie.network.transaction", "brownie-network-transaction"),
+            ("brownie.convert", "brownie-convert-import"),
+            ("project.Token", "project-contract-container"),
+            ("project.Contract", "project-contract-container"),
+            ("accounts[", "accounts-address"),
+            ("chain.provider.network", "chain-provider-network"),
         ]
+
+        transformable = self._get_transformable_patterns()
 
         for line_num, line in enumerate(content.split("\n"), 1):
             for pattern, pattern_type in usage_patterns:
@@ -157,18 +194,11 @@ class PatternDetector:
                         pattern_type=pattern_type,
                         matched_text=pattern,
                         confidence=0.9,
-                        can_transform=pattern_type in self._get_transformable_patterns()
+                        can_transform=pattern_type in transformable
                     ))
 
         return matches
 
     def _get_transformable_patterns(self) -> set[str]:
         """Get set of patterns that have deterministic transforms."""
-        return {
-            "brownie_eth_address",
-            "network_connect",
-            "network_eth_account",
-            "brownie_chain_api",
-            "web3_eth_import",
-            "project_contract_container",
-        }
+        return self.TRANSFORMABLE_PATTERNS

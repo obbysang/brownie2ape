@@ -35,7 +35,7 @@ class TestPatternDetector:
         detector = PatternDetector(temp_project)
         report = detector.scan_repository()
 
-        assert len([m for m in report.matches if m.pattern_type == "network_connect"]) > 0
+        assert len([m for m in report.matches if m.pattern_type == "network-connect"]) > 0
 
     def test_detects_project_contract(self, temp_project):
         """Test detection of project.Contract pattern."""

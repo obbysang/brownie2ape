@@ -83,22 +83,16 @@ def migrate(project_path: str, dry_run: bool, rules_dir: str, ai_fallback: bool)
     project = Path(project_path)
     rules = Path(rules_dir) if rules_dir else Path(__file__).parent / "rules"
 
-    console.print(f"[bold cyan]Migrating:[/bold cyan] {project}")
+    print(f"Migrating: {project}")
     if dry_run:
-        console.print("[yellow]DRY RUN - No changes will be made[/yellow]")
+        print("DRY RUN - No changes will be made")
 
     engine = CodemodEngine(project, rules)
+    stats = engine.apply_all_codemods(dry_run)
 
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console
-    ) as progress:
-        progress.add_task("Running codemods...", total=None)
-        stats = engine.apply_all_codemods(dry_run)
-
-    console.print(f"[green]Files modified:[/green] {stats.files_modified}")
-    console.print(f"[green]Total changes:[/green] {stats.total_changes}")
+    print(f"Files modified: {stats.files_modified}")
+    print(f"Total changes: {stats.total_changes}")
+    print(f"Files scanned: {stats.files_scanned}")
 
     if ai_fallback:
         console.print("\n[cyan]Running AI fallback for edge cases...[/cyan]")
