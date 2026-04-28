@@ -25,6 +25,10 @@ ai = [
 
 [project.scripts]
 brownie2ape = "brownie2ape.cli:main"
+ethers5to6 = "ethers5to6.cli:main"
+
+[tool.setuptools]
+packages = ["brownie2ape", "ethers5to6"]
 
 [tool.ruff]
 line-length = 100
