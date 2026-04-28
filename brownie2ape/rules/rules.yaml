@@ -1,0 +1,53 @@
+# Ast-grep rules for Brownie to Ape Framework migration
+# Using ast-grep (jssg) as required by the hackathon
+
+rules:
+  - id: brownie-import-network
+    message: "Migrate 'from brownie import network' to 'from ape import account'"
+    pattern: "from brownie import network"
+    fix: "from ape import account"
+
+  - id: brownie-import-accounts
+    message: "Migrate 'from brownie.network.account import accounts' to 'from ape import accounts'"
+    pattern: "from brownie.network.account import accounts"
+    fix: "from ape import accounts"
+
+  - id: brownie-import-project
+    message: "Migrate 'import brownie.project' to 'import ape.project'"
+    pattern: "import brownie.project"
+    fix: "import ape.project"
+
+  - id: brownie-eth-usage
+    message: "Migrate 'brownie.eth' to 'ape.eth'"
+    pattern: "brownie.eth"
+    fix: "ape.eth"
+
+  - id: network-connect
+    message: "Migrate 'network.connect(host)' to 'chain.provider.connect(host)'"
+    pattern: "network.connect($HOST)"
+    fix: "chain.provider.connect($HOST)"
+
+  - id: network-eth-accounts
+    message: "Migrate 'network.eth.accounts' to 'account.accounts'"
+    pattern: "network.eth.accounts"
+    fix: "account.accounts"
+
+  - id: project-contract-container
+    message: "Migrate 'project.Contract' to 'project.containers[\"Contract\"]'"
+    pattern: "project.$CONTRACT"
+    fix: "project.containers[\"$CONTRACT\"]"
+
+  - id: brownie-chain-api
+    message: "Migrate 'from brownie.network.eth import ChainAPI' to 'from ape import api'"
+    pattern: "from brownie.network.eth import ChainAPI"
+    fix: "from ape import api"
+
+  - id: web3-eth-replace
+    message: "Migrate 'web3.eth' to 'chain'"
+    pattern: "web3.eth"
+    fix: "chain"
+
+  - id: brownie-config-replace
+    message: "Migrate 'brownie._config' to 'ape.config'"
+    pattern: "brownie._config"
+    fix: "ape.config"
